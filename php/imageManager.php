@@ -5,7 +5,7 @@
     
     $set = $_POST['set'];
     $user = $_POST['username'];
-    $userImagePath = "../images/" . $user;
+    $userImagePath = "/var/www/images/" . $user;
     switch($set){
         case 'true':
             $response = array();

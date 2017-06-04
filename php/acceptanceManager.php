@@ -18,13 +18,11 @@ require 'helper.php';
         case "get":
             $db = new PDO('Helper'::DATABASELOCATION);
             //$results = $db->query("SELECT user FROM acceptanceRecords WHERE challenge=\"" . $challenge . "\";");
-            $results = $db->query("SELECT user FROM acceptanceRecords WHERE challenge=\"" . $challenge . "\" INNER JOIN videLikeRecords ON (user = user) GROUP BY user ORDER BY count(*) limit(50);");
-            $results->setFetchMode(PDO::FETCH_ASSOC);
-            $usernames = array();
+            $results = $db->query("select userResult from (select user as userResult,challenge as challengeResult from acceptanceRecords WHERE challenge = \"" . $challenge . "\") LEFT JOIN videoLikeRecords ON (userResult = videoLikeRecords.user AND challengeResult = videoLikeRecords.challenge) GROUP BY user ORDER BY count(*) DESC;");
             $index = 0;
             while($username = $results->fetch()){
-                $usernames[$index]["username"] = $username["user"];
-                $query = "SELECT liker FROM videoLikeRecords WHERE challenge=\"" . $challenge . "\" AND user=\"" . $username["user"] . "\";";
+                $usernames[$index]["username"] = $username["userResult"];
+                $query = "SELECT liker FROM videoLikeRecords WHERE challenge=\"" . $challenge . "\" AND user=\"" . $username["userResult"] . "\";";
                 
                 $likeResults = $db->query($query);
                 

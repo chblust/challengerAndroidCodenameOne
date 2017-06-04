@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL);
 /***
  * determines the intent of the request, executes the appropriate code
  */

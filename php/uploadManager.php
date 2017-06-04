@@ -15,6 +15,7 @@
         $response['success'] = 'true';
         echo json_encode($response);
         //run program that segments the video file for streaming
+	exec("chmod 777 " . $newPath);
         $segmentCommand = "/var/www/segmenterSoftware/segmenter -i uploads/" . $challengeName."/" . $user . ".upload > /dev/null &";
         exec($segmentCommand);
         //add acceptance entry in database
