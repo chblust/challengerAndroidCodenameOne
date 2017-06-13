@@ -46,7 +46,7 @@ require 'helper.php';
                 $index = 0;
                 foreach($feedEntries as $feedEntry){
                     $challengeData[$index] = 'Helper'::getChallengeByName($feedEntry['challengeName'], $feedEntry['type'])[0];
-                    $challengeData[$index]['poster'] = 'null';
+                    $challengeData[$index]['poster'] = $user;
                     $index++;
                 }
             break;
