@@ -3,7 +3,6 @@ require 'helper.php';
     //determine type of like and user who is doing it from post request
     $user = $_POST['username'];
     $type = $_POST['type'];
-    $set = $_POST['set'];
     switch($type){
             case 'challenge':
                 //use helper method to add user to challenge like records
