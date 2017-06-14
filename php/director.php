@@ -66,6 +66,10 @@ switch($_POST['intent']){
 	case 'removeVideo':
 	require 'videoRemover.php';
 	break;
+
+	case 'checkUser':
+	require 'userChecker.php';
+	break;
         
     case 'report':
     require 'reportManager.php';

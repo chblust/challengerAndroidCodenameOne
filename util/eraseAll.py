@@ -1,8 +1,9 @@
 import sqlite3
+import os
 db = sqlite3.connect("../data/challengerDatabase")
 
 cursor = db.cursor()
-print("are you sure you want to wipe challengerDatabase? (y/n)")
+print("are you sure you want to wipe challengerDatabase and all related files? (y/n)")
 confirm = raw_input();
 
 if confirm == "y":
@@ -12,5 +13,14 @@ if confirm == "y":
 		cursor.execute("DELETE FROM " + table + ";")
 	db.commit()
 	db.close()
-	print("database clear")
+	print("database clear, now moving on to delete uploads and images...")
+
+	for file in os.listdir("/var/www/images"):
+		print("deleting file: " + file)
+		os.system("sudo rm /var/www/images/" + file)
+	for file in os.listdir("/var/www/php/uploads"):
+		print("deleting directory: " + file)
+		os.system("sudo rm -r /var/www/php/uploads/" + file);
+
+	print("u either did that on purpose or royally f__ed up")
 
