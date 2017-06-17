@@ -257,7 +257,9 @@ static function registerChallenge($name, $author, $instructions){
         -adds an acceptance to the feed of all the followers of $user
      ***/
     static function acceptChallenge($challengeName, $user){
-        //establish connection to database
+      	if (!'Helper'::userHasAccepted($user, $challengeName)){
+
+	  //establish connection to database
         $db = new PDO('Helper'::DATABASELOCATION);
         //setup query
         $query = "INSERT INTO acceptanceRecords VALUES (\"" . $challengeName . "\",\"" . $user . "\");";
@@ -287,6 +289,7 @@ static function registerChallenge($name, $author, $instructions){
         }
         $feedQuery .= ";";
         $db->exec($feedQuery);
+	}
     }
     
     /***
