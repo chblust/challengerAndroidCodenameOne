@@ -1,5 +1,5 @@
 <?php
-    require 'Helper.php';
+    require 'helper.php';
 /***
  determines which information is being changed based on what is set, changes information accordingly
  ***/

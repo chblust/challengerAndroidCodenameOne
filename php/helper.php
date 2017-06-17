@@ -63,14 +63,33 @@ static function getChallengeByName($name, $type){
      How the following nested madness works:
         -for each challenge, do three things:
             1: add initial metadata to response array
-            2: add each liker user to the response array from the likeRecords table
-            3: add each rechallenger user to the response array from the rechallengeRecords table
-     ***/
+            2: add the number of acceptances the challenge has to the response array
+	    3: add each liker user to the response array from the likeRecords table
+            4: add each rechallenger user to the response array from the rechallengeRecords table
+  	    
+	  ***/
     
     $index = 0;
 	$results->setFetchMode(PDO::FETCH_ASSOC);
     $next = $results->fetch();
 		$data[$index] = $next;
+	
+	//query database to get each acceptance
+	$accResults = $db->query("SELECT user FROM acceptanceRecords WHERE challenge=\"" . $name . "\";");
+	$accResults->setFetchMode(PDO::FETCH_ASSOC);
+	$acc = $accResults->fetchAll();
+	
+	if($acc == false){
+		$data[$index]['acceptedCount'] = '0';
+	}else{
+		$count = sizeof($acc);
+		$data[$index]['acceptedCount'] = "$count";
+	}
+
+
+
+
+
         
         //setup liker array for challenge
         $data[$index]['likers'] = array();

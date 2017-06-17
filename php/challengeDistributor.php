@@ -97,6 +97,21 @@ require 'helper.php';
 		$index++;
             }
         	break;
+	case 'accepted':
+		$username = $_POST['username'];
+		$db = new PDO('Helper'::DATABASELOCATION);
+		$results = $db->query("SELECT challenge FROM acceptanceRecords WHERE user=\"" . $username . "\";");
+		$results->setFetchMode(PDO::FETCH_ASSOC);
+		$challengeNames = $results->fetchAll();
+		$index = 0;
+		//var_dump($challengeNames);
+		foreach($challengeNames as $challenge){
+                $challengeData[$index] = 'Helper'::getChallengeByName($challenge['challenge'], 'challenge')[0];
+                $challengeData[$index]['feedType'] = 'challenge';
+                $challengeData[$index]['poster'] = 'null';
+                $index++;
+            	}
+		break;
     
     }
     
