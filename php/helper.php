@@ -278,6 +278,8 @@ static function registerChallenge($name, $author, $instructions){
             $followers[$index] = $next['user'];
             $index++;
         }
+
+	$followers[$index] = $user;
         
         $feedQuery = "INSERT INTO feedData VALUES ";
         //add challenge to all follower feeds
