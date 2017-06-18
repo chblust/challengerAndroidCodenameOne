@@ -394,7 +394,7 @@ static function registerChallenge($name, $author, $instructions){
         //execute query
         $db->exec($query);
         
-        $db->exec("DELETE FROM feedData WHERE poster=\"" . $rechallengeUser . "\" AND challenge=\"" . $challengeName . "\";");
+        $db->exec("DELETE FROM feedData WHERE poster=\"" . $rechallengeUser . "\" AND challenge=\"" . $challengeName . "\" AND type=\"reChallenge\";");
 //        $followerQuery = "SELECT user FROM followRecords WHERE isFollowing=\"" . $rechallengeUser . "\";";
 //        //execute follower retrieval query
 //        $followerQueryResults = $db->query($followerQuery);
