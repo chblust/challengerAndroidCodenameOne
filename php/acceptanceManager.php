@@ -79,7 +79,30 @@ require 'helper.php';
                 }
                 $index++;
             }
-            echo json_encode($usernames);
+
+
+		//now determine which usernames to send back
+
+		$response = array();
+		$responseCount = 50;//the amount of acceptances that will appear at once on the client
+		$rIndex = 0;
+		if(isset($_POST['setLimit'])){
+        $limit = $_POST['setLimit'];
+	$index = 0;
+        for($index = $limit - 1; $index < count($usernames) && $index < $limit + $responseCount- 1; $index++){
+                if ($usernames[$index] != null){
+                        $response['acceptances'][$rIndex] = $usernames[$index];
+                        $rIndex++;
+                }
+        }
+	if($index == count($usernames)){
+		$response['end'] = 'true';
+	}else{
+		$response['end'] = 'false';
+	}
+
+}
+            echo json_encode($response);
     }
    
 

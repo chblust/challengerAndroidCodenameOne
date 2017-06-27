@@ -43,11 +43,11 @@ require 'helper.php';
                     $feedEntries[$index]['type'] = $challengeName['type'];
                     $index++;
                 }
-                $index = 0;
+                $index = count($feedEntries)-1;
                 foreach($feedEntries as $feedEntry){
                     $challengeData[$index] = 'Helper'::getChallengeByName($feedEntry['challengeName'], $feedEntry['type'])[0];
                     $challengeData[$index]['poster'] = $user;
-                    $index++;
+                    $index--;
                 }
             break;
             
@@ -69,11 +69,11 @@ require 'helper.php';
                 $feedEntries[$index]['poster'] = $challengeName['poster'];
                 $index++;
             }
-            $index = 0;
+            $index = count($feedEntries)-1;
             foreach($feedEntries as $feedEntry){
                 $challengeData[$index] = 'Helper'::getChallengeByName($feedEntry['challengeName'], $feedEntry['type'])[0];
                 $challengeData[$index]['poster'] = $feedEntry['poster'];
-                $index++;
+                $index--;
             }
 
             break;
@@ -89,12 +89,12 @@ require 'helper.php';
 			$index++;
 		}
 
-		$index = 0;
+		$index = count($challenges)-1;
             foreach($challenges as $challenge){
             	$challengeData[$index] = 'Helper'::getChallengeByName($challenge, 'challenge')[0];
             	$challengeData[$index]['feedType'] = 'challenge';
             	$challengeData[$index]['poster'] = 'null';
-		$index++;
+		$index--;
             }
         	break;
 	case 'accepted':
@@ -103,13 +103,12 @@ require 'helper.php';
 		$results = $db->query("SELECT challenge FROM acceptanceRecords WHERE user=\"" . $username . "\";");
 		$results->setFetchMode(PDO::FETCH_ASSOC);
 		$challengeNames = $results->fetchAll();
-		$index = 0;
-		//var_dump($challengeNames);
+		$index = count($challengeNames)-1;
 		foreach($challengeNames as $challenge){
                 $challengeData[$index] = 'Helper'::getChallengeByName($challenge['challenge'], 'challenge')[0];
                 $challengeData[$index]['feedType'] = 'challenge';
                 $challengeData[$index]['poster'] = 'null';
-                $index++;
+                $index--;
             	}
 		break;
     
@@ -117,16 +116,22 @@ require 'helper.php';
     
 //now, setup final return to only return requested challenges. this is a safety measure to ensure not too much is sent in one request
 $response = array();
-$responseCount = 5;//constant determines the amount of challenges that are sent to the client at once
+$responseCount = 30;//constant determines the amount of challenges that are sent to the client at once
 $rIndex = 0;//index to keep track of the response array, the one embedded in the for loop keeps track of the challengeData index
 
 if(isset($_POST['setLimit'])){
 	$limit = $_POST['setLimit'];
+	$index = 0;
 	for($index = $limit - 1; $index < count($challengeData) && $index < $limit + $responseCount- 1; $index++){
 		if ($challengeData[$index] != null){
-			$response[$rIndex] = $challengeData[$index];
+			$response['challenges'][$rIndex] = $challengeData[$index];
 			$rIndex++;
 		}
+	}
+	if($index == count($challengeData)){
+		$response['end'] = true;
+	}else{
+		$response['end'] = false;
 	}
 		
 }    
