@@ -395,26 +395,6 @@ static function registerChallenge($name, $author, $instructions){
         $db->exec($query);
         
         $db->exec("DELETE FROM feedData WHERE poster=\"" . $rechallengeUser . "\" AND challenge=\"" . $challengeName . "\" AND type=\"reChallenge\";");
-//        $followerQuery = "SELECT user FROM followRecords WHERE isFollowing=\"" . $rechallengeUser . "\";";
-//        //execute follower retrieval query
-//        $followerQueryResults = $db->query($followerQuery);
-//        //turn query results into an array
-//        $followers = array();
-//        $index = 0;
-//        $followerQueryResults->setFetchMode(PDO::FETCH_ASSOC);
-//        while($next = $followerQueryResults->fetch()){
-//            $followers[$index] = $next['user'];
-//            $index++;
-//        }
-//        //logic for removing upload from user feeds
-//        if (count($followers) != 0){
-//            foreach($followers as $follower){
-//                $query ="DELETE FROM feedData WHERE  challenge=\"" . $challengeName . "\" AND poster=\"" . $rechallengeUser . "\" AND type=\"" . "rechallenge\";";
-//                $db->exec($query);
-//                
-//            }
-//        
-//        }
     }
 
     /***
@@ -524,7 +504,32 @@ static function registerChallenge($name, $author, $instructions){
         
         //execute that shit
         $db->exec($query);
+	
+	exec("rm -r /var/www/php/uploads/" . 'Helper'::getSafeString($challengeName) . "/" . $uploader);
     }
+
+static function removeUser($username){
+	$db = new PDO('Helper'::DATABASELOCATION);
+	//get a list of the challenges this user has posted, if any
+	$challengeNameResults = $db->query("SELECT name FROM challengeMetadata WHERE author=\"" . $username . "\";");
+	if ($challengeNameResults != false){
+		//now delete all those challenges
+		$challengeNameResults->setFetchMode(PDO::FETCH_ASSOC);
+		$challengeNames = $challengeNameResults->fetchAll();
+	
+		foreach($challengeNames as $challenge){
+			'Helper'::removeChallenge($challenge['name']);
+		}
+
+		//next, obliterate all traces of this user ever existing;
+		}	
+	
+	
+	$query = "DELETE FROM userMetadata WHERE username=\"" . $username . "\";";
+	$query .= "DELETE FROM followRecords WHERE user=\"" . $username . "\" OR isFollowing=\"" . $username . "\";";
+	$db->exec($query);
+	exec("/var/www/images/" . $username);
+}
     /***
      returns true if user is following user2
      ***/

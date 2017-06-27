@@ -8,4 +8,8 @@ require 'helper.php';
     $uploader = $_POST['uploader'];
     
     'Helper'::removeVideo($challengeName, $uploader);
+	$response = array();
+	$response['success'] = 'true';
+
+	echo json_encode($response);
 ?>

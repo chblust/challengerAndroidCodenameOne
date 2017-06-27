@@ -78,6 +78,9 @@ switch($_POST['intent']){
     case 'acceptance':
     require 'acceptanceManager.php';
         break;
+	case 'removeUser':
+	require 'userRemover.php';
+	break;
 }
 }else{
     var_dump($_POST);

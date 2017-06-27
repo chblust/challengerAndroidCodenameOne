@@ -115,10 +115,24 @@ require 'helper.php';
     
     }
     
-    
+//now, setup final return to only return requested challenges. this is a safety measure to ensure not too much is sent in one request
+$response = array();
+$responseCount = 5;//constant determines the amount of challenges that are sent to the client at once
+$rIndex = 0;//index to keep track of the response array, the one embedded in the for loop keeps track of the challengeData index
+
+if(isset($_POST['setLimit'])){
+	$limit = $_POST['setLimit'];
+	for($index = $limit - 1; $index < count($challengeData) && $index < $limit + $responseCount- 1; $index++){
+		if ($challengeData[$index] != null){
+			$response[$rIndex] = $challengeData[$index];
+			$rIndex++;
+		}
+	}
+		
+}    
     
     
     
 //return json enocoded results
-echo json_encode($challengeData);
+echo json_encode($response);
 ?>
