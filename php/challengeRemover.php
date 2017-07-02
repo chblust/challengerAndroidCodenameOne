@@ -8,4 +8,7 @@ require 'helper.php';
     $challengeName = $_POST['challengeName'];
 
     'Helper'::removeChallenge($challengeName);
+    $response = array();
+    $response['success'] = 'true';
+	echo json_encode($response);
 ?>

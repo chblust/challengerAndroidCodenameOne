@@ -413,11 +413,32 @@ static function registerChallenge($name, $author, $instructions){
      creates follow entry in followRecords table of challengerDatabase
     ***/
     static function followUser($user, $userToFollow){
-        //establish connection to database
+        //first thing we gotta do is write this new follow relationship to the database
+
+	//establish connection to database
         $db = new PDO('Helper'::DATABASELOCATION);
         //setup query
         $query = "INSERT INTO followRecords VALUES (\"" . $user . "\",\"" . $userToFollow . "\");";
         $db->exec($query);
+
+	//next thing that needs to happen is some of the recent posts of the followed user need to be places in the following user's feed
+	//get the names of the last 10 challenges the user posted
+	$query = "SELECT challenge,type FROM feedData WHERE poster=\"" . $userToFollow . "\" AND user=\"" . $userToFollow . "\" limit(5);";
+	$nameResults = $db->query($query);
+	if($nameResults != null){
+		$nameResults->setFetchMode(PDO::FETCH_ASSOC);
+		$names = $nameResults->fetchAll();
+		
+		$query = "INSERT INTO feedData VALUES";
+		for($i = 0; $i < count($names); $i++){
+			$query .= " (\"" . $user . "\",\"" . $names[$i]['challenge'] . "\",\"" . $userToFollow . "\",\"" . $names[$i]['type'] . "\")";
+			if($i != count($names) - 1){
+				$query .= ",";
+			} 
+		}
+		$query .= ";";
+		$db->exec($query);
+	}
     }
     
     /***
@@ -426,8 +447,8 @@ static function registerChallenge($name, $author, $instructions){
     static function unFollowUser($user, $userToUnFollow){
         //establish connection to database
         $db = new PDO('Helper'::DATABASELOCATION);
-        //setup query
-        $query = "DELETE FROM followRecords WHERE user=\"" . $user . "\" AND isFollowing=\"" . $userToUnFollow . "\";";
+        //setup query to not only remove the follow relationship, but to also remove the followed's challenges from the ex-following
+        $query = "DELETE FROM followRecords WHERE user=\"" . $user . "\" AND isFollowing=\"" . $userToUnFollow . "\"; DELETE FROM feedData WHERE user=\"" . $user . "\" AND poster=\"" . $userToUnFollow . "\";";
         $db->exec($query);
     }
     

@@ -119,7 +119,7 @@ $response = array();
 $responseCount = 30;//constant determines the amount of challenges that are sent to the client at once
 $rIndex = 0;//index to keep track of the response array, the one embedded in the for loop keeps track of the challengeData index
 
-if(isset($_POST['setLimit'])){
+if(!($type === 'list')){
 	$limit = $_POST['setLimit'];
 	$index = 0;
 	for($index = $limit - 1; $index < count($challengeData) && $index < $limit + $responseCount- 1; $index++){
@@ -133,11 +133,17 @@ if(isset($_POST['setLimit'])){
 	}else{
 		$response['end'] = false;
 	}
-		
+	echo json_encode($response);	
+}else{
+$response = array();
+for($i = 0; $i  < count($challengeData); $i++){
+	$response['challenges'][$i] = $challengeData[$i];
+}
+$response['end'] = 'true';
+echo json_encode($response);
 }    
     
     
     
 //return json enocoded results
-echo json_encode($response);
 ?>
