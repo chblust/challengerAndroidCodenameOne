@@ -21,6 +21,10 @@
         //add acceptance entry in database
  
         'Helper'::acceptChallenge($_POST['challengeName'], $user);
+	$author = 'Helper'::getChallengeByName($_POST['challengeName'], 'challenge')[0]['author'];
+	if(strcmp($author, $user) != 0){
+	    'Helper'::sendPushNotification($author, "acceptance", $_POST['username'], $_POST['challengeName']);
+        }
     }else{
         //tell client upload failed
         $response['success'] = 'false';

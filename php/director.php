@@ -71,16 +71,21 @@ switch($_POST['intent']){
 	require 'userChecker.php';
 	break;
         
-    case 'report':
-    require 'reportManager.php';
-    break;
-        
-    case 'acceptance':
-    require 'acceptanceManager.php';
+        case 'report':
+        require 'reportManager.php';
         break;
-	case 'removeUser':
+        
+        case 'acceptance':
+        require 'acceptanceManager.php';
+        break;
+	
+        case 'removeUser':
 	require 'userRemover.php';
 	break;
+       
+        case 'notifications':
+        require 'notificationManager.php';
+        break;
 }
 }else{
     var_dump($_POST);

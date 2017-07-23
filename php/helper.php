@@ -2,6 +2,7 @@
 class Helper{
 const DATABASELOCATION = "sqlite:/var/www/data/challengerDatabase";
 const REPORT_DATABASE_LOCATION = "sqlite:/var/www/data/reportDatabase";
+const NOTIFICATIONS_DATABASE_LOCATION = "sqlite:/var/www/data/notificationsDatabase";
 /***
  * returns an array of the user metadata for the user with the username $name
  */
@@ -600,6 +601,73 @@ static function removeUser($username){
             }
             return true;
     }
+	static function sendPushNotification($user, $type, $sender, $challenge){
+		if($user !== $sender){
+		require '/var/www/pushManagement/vendor/autoload.php';
+		//first check to see if notification exists
+        	$db = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
+		$result = $db->query("SELECT * FROM notifications WHERE username=\"" . $user . "\" AND type=\"" . $type . "\" AND sender=\"" . $sender . "\" AND challenge=\"" . $challenge . "\";");
+		
+		if($result->fetchAll()[0] == null){
+                    $db->exec("INSERT INTO notifications VALUES (\"" . $user . "\",\"" . $type . "\",\"" . $sender . "\",\"" . $challenge . "\");");
+		    
+$body = '';
+switch($type){
+case 'acceptance':
+$body = $sender . ' has accepted your challenge: ' . $challenge;
+break;
+
+case 'follow':
+$body = $sender . ' has started following you!';
+break;
+
+case 'like':
+$body = $sender . ' liked your challenge: ' . $challenge;
+break;
+
+case 'vlike':
+$body = $sender . ' liked your video you posted to ' . $challenge;
+break;
+
+case 'rechallenge':
+$body = $sender . ' reChallenged your challenge: ' . $challenge;
+break;
+
+
+
+}
+
+
+                    
+                    $options = array(
+    		    'cluster' => 'us2',
+    		    'encrypted' => true
+  		    );
+  		    $pusher = new Pusher(
+    		    'e0cf251611da3086a1f5',
+    		    '1c6faa912e843a5e522a',
+    		    '364524',
+    		    $options
+  		    );
+
+		    $pusher->notify(
+ 		     array($user),
+  	       	    array(
+    		    'apns' => array(
+     		     'aps' => array(
+        		    'alert' => array(
+                             'challenge' => $challenge,
+         		     'type' => $type,
+                	     'sender' => $sender,
+                             'body' => $body
+        		    ),
+      		    ),
+    		    ),
+		      )
+		    );
+              }   
+          }
+	} 
      
 }
      
