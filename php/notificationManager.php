@@ -12,8 +12,11 @@ $notifications = $results->fetchAll();
 echo json_encode($notifications);
 break;
 case 'remove':
-$notification = $_POST['notification'];
-$db->exec("DELETE FROM notifications WHERE username=\"" . $notification['username'] . "\" AND type=\"" . $notification['type'] . "\" AND sender=\"" . $notification['sender'] . "\" AND challenge=\"" . $notification['challenge'] . "\";");
+$notificationType = $_POST['notificationType'];
+$sender = $_POST['sender'];
+$challenge = $_POST['challenge'];
+var_dump($_POST);
+$db->exec("DELETE FROM notifications WHERE username=\"" . $user . "\" AND type=\"" . $notificationType . "\" AND sender=\"" . $sender . "\" AND challenge=\"" . $challenge . "\";");
 break;
 }
 

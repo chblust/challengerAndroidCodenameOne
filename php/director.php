@@ -86,6 +86,10 @@ switch($_POST['intent']){
         case 'notifications':
         require 'notificationManager.php';
         break;
+        
+        case 'comments':
+        require 'commentManager.php';
+        break;
 }
 }else{
     var_dump($_POST);

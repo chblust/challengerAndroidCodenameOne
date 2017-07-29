@@ -25,6 +25,14 @@ require 'helper.php';
 		'Helper'::sendPushNotification($uploader, 'vlike', $user, $challengeName);
             }
                 break;
+           case 'comment':
+           $uuid = $_POST['uuid'];
+           if('Helper'::hasLikedComment($uuid, $user)){
+               'Helper'::unLikeComment($uuid, $user);
+           }else{
+               'Helper'::likeComment($uuid, $user);
+           }
+           break;
     }
     
     

@@ -3,6 +3,7 @@ class Helper{
 const DATABASELOCATION = "sqlite:/var/www/data/challengerDatabase";
 const REPORT_DATABASE_LOCATION = "sqlite:/var/www/data/reportDatabase";
 const NOTIFICATIONS_DATABASE_LOCATION = "sqlite:/var/www/data/notificationsDatabase";
+const COMMENTS_DATABASE_LOCATION = "sqlite:/var/www/data/commentsDatabase";
 /***
  * returns an array of the user metadata for the user with the username $name
  */
@@ -592,6 +593,24 @@ static function removeUser($username){
         }
         return true;
     }
+  
+    static function hasLikedComment($uuid, $liker){
+        $db = new PDO('Helper'::COMMENTS_DATABASE_LOCATION);
+        if(($db->query("SELECT * FROM commentLikes WHERE liker=\"" . $liker . "\";"))->fetchAll()[0] == null){
+            return false;
+        }
+        return true;
+    }
+
+    static function likeComment($uuid, $liker){
+        $db = new PDO('Helper'::COMMENTS_DATABASE_LOCATION);
+        $db->exec("INSERT INTO commentLikes VALUES (\"" . $uuid . "\",\"" . $liker . "\");");
+    }
+
+    static function unLikeComment($uuid, $liker){
+        $db = new PDO('Helper'::COMMENTS_DATABASE_LOCATION);
+        $db->exec("DELETE FROM commentLikes WHERE uuid = \"" . $uuid . "\" AND liker=\"" . $liker . "\";");
+    }
     
     static function userHasAccepted($user, $challengeName){
          $db = new PDO('Helper'::DATABASELOCATION);
@@ -656,11 +675,13 @@ break;
     		    'apns' => array(
      		     'aps' => array(
         		    'alert' => array(
+                                 'body' => $body
+				),
                              'challenge' => $challenge,
          		     'type' => $type,
                 	     'sender' => $sender,
-                             'body' => $body
-        		    ),
+                             
+        		    
       		    ),
     		    ),
 		      )

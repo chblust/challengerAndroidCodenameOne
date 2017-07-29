@@ -17,7 +17,7 @@ require 'helper.php';
             //uses helper method to retrieve all challengeMetadata for each challenge name
             $index = 0;
             foreach($feedEntries as $challengeName){
-                $challengeData[$index] = 'Helper'::getChallengeByName($challengeName)[0];
+                $challengeData[$index] = 'Helper'::getChallengeByName($challengeName, 'challenge')[0];
                 $challengeData[$index]['poster'] = 'null'; 
                 $index++;
             }
