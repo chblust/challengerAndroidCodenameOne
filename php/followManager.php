@@ -18,7 +18,7 @@ require 'helper.php';
                 'Helper'::unFollowUser($user, $userToFollow);
             }else{
                 'Helper'::followUser($user, $userToFollow);
-                'Helper'::sendPushNotification($userToFollow, "follow", $user, "");
+                'Helper'::sendPushNotification($userToFollow, "follow", $user, "", "");
             }
     
     

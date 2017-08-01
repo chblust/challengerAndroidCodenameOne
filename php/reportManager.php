@@ -12,18 +12,21 @@
     switch($type){
     
             case 'user':
-            $offender = $_POST['offender'];
-            $db->exec("INSERT INTO userReports VALUES (\"" . $offender . "\",\"" . $reporter . "\",\"" . $reason . "\", date(\"now\"));");
-            break;
+                $offender = $_POST['offender'];
+                $db->exec("INSERT INTO userReports VALUES (\"" . $offender . "\",\"" . $reporter . "\",\"" . $reason . "\", date(\"now\"));");
+                break;
             case 'challenge':
-            $challenge = $_POST['challenge'];
-            $db->exec("INSERT INTO challengeReports VALUES (\"" . $challenge . "\",\"" . $reporter . "\",\"" . $reason . "\", date(\"now\"));");
-            break;
+                $challenge = $_POST['challenge'];
+                $db->exec("INSERT INTO challengeReports VALUES (\"" . $challenge . "\",\"" . $reporter . "\",\"" . $reason . "\", date(\"now\"));");
+                break;
             case 'video':
-            $challenge = $_POST['challenge'];
-            $offender = $_POST['offender'];
-            $db->exec("INSERT INTO videoReports VALUES (\"" . $challenge . "\",\"" . $offender . "\",\"" . $reporter . "\",\"" . $reason . "\", date(\"now\"));");
-            break;
+                $challenge = $_POST['challenge'];
+                $offender = $_POST['offender'];
+                $db->exec("INSERT INTO videoReports VALUES (\"" . $challenge . "\",\"" . $offender . "\",\"" . $reporter . "\",\"" . $reason . "\", date(\"now\"));");
+                break;
+           case 'comment':
+                $uuid = $_POST['uuid'];
+                $db->exec("INSERT INTO commentReports VALUES (\"" . $uuid . "\",\"" . $reporter . "\",\"" . $reason . "\",date(\"now\"));");
     
     }
 

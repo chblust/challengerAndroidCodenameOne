@@ -8,12 +8,27 @@ if ($type == 'send'){
     $challenge = $_POST['challenge'];
     $message = $_POST['message'];
     $replyingTo = $_POST['replyingTo'];
-    $query = "INSERT INTO comments VALUES (\"" . uniqid(true) . "\",\"" . $author . "\",\"" . $challenge . "\",\"" . $message . "\",date(\"now\"),\"" . $replyingTo . "\");";
+    $newuuid = uniqid(true);
+    $query = "INSERT INTO comments VALUES (\"" . $newuuid . "\",\"" . $author . "\",\"" . $challenge . "\",\"" . $message . "\",date(\"now\"),\"" . $replyingTo . "\");";
     $db->exec($query);
     $response = array();
     $response['success'] = 'true';
     echo json_encode($response);
-    }
+    $challengeAuthor = 'Helper'::getChallengeByName($challenge, "challenge")[0]['author'];
+    if ($replyingTo == ""){
+        'Helper'::sendPushNotification($challengeAuthor, 'comment', $author, $challenge, $newuuid);
+    }else{
+        $commentAuthor = $db->query("SELECT author FROM comments WHERE uuid=\"" . $replyingTo . "\";")->fetchAll()[0]['author'];
+        'Helper'::sendPushNotification($commentAuthor, 'reply', $author, $challenge, $newuuid);
+    }    
+}
+else if ($type == 'remove'){
+    $uuid = $_POST['uuid'];
+    $db->exec("DELETE FROM comments WHERE uuid=\"" . $uuid . "\";");
+    $response = array();
+    $response['success'] == 'true';
+    echo json_encode($response);
+}
 else{
     $ret = array();
     $challenge = $_POST['challenge'];
@@ -23,6 +38,9 @@ else{
     }else if ($type == 'replys'){
         $uuid = $_POST['uuid'];
         $query = "SELECT * FROM comments WHERE replyingTo=\"" . $uuid . "\";";
+    }else if ($type == 'single'){
+        $uuid = $_POST['uuid'];
+        $query = "SELECT * FROM comments WHERE uuid=\"" . $uuid . "\";";
     }
     $result = $db->query($query);
     if($result != false){

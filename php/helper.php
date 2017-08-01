@@ -620,12 +620,12 @@ static function removeUser($username){
             }
             return true;
     }
-	static function sendPushNotification($user, $type, $sender, $challenge){
+	static function sendPushNotification($user, $type, $sender, $challenge, $uuid){
 		if($user !== $sender){
 		require '/var/www/pushManagement/vendor/autoload.php';
 		//first check to see if notification exists
         	$db = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
-		$result = $db->query("SELECT * FROM notifications WHERE username=\"" . $user . "\" AND type=\"" . $type . "\" AND sender=\"" . $sender . "\" AND challenge=\"" . $challenge . "\";");
+		$result = $db->query("SELECT * FROM notifications WHERE username=\"" . $user . "\" AND type=\"" . $type . "\" AND sender=\"" . $sender . "\" AND challenge=\"" . $challenge . "\" AND uuid=\"" . $uuid . "\";");
 		
 		if($result->fetchAll()[0] == null){
                     $db->exec("INSERT INTO notifications VALUES (\"" . $user . "\",\"" . $type . "\",\"" . $sender . "\",\"" . $challenge . "\");");
@@ -652,8 +652,19 @@ case 'rechallenge':
 $body = $sender . ' reChallenged your challenge: ' . $challenge;
 break;
 
+//comments
 
+case 'comment':
+$body = $sender . ' commented on your challenge: ' . $challenge;
+break;
 
+case 'clike':
+$body = $sender . ' liked your comment you posted to ' . $challenge;
+break;
+
+case 'reply':
+$body = $sender . ' replied to your comment you posted to ' . $challenge;
+break;
 }
 
 
@@ -680,8 +691,7 @@ break;
                              'challenge' => $challenge,
          		     'type' => $type,
                 	     'sender' => $sender,
-                             
-        		    
+                             'uuid' => $uuid,  		    
       		    ),
     		    ),
 		      )

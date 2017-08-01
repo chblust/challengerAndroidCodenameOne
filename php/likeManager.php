@@ -12,7 +12,7 @@ require 'helper.php';
             }else{
                 'Helper'::likeChallenge($challengeName, $user);
                 $author = 'Helper'::getChallengeByName($challengeName, "challenge")[0]['author'];
-		'Helper'::sendPushNotification($author, "like", $user, $challengeName);
+		'Helper'::sendPushNotification($author, "like", $user, $challengeName, '');
             }
                 break;
             case 'video':
@@ -22,7 +22,7 @@ require 'helper.php';
                 'Helper'::unLikeVideo($challengeName, $uploader, $user);
             }else{
                 'Helper'::likeVideo($challengeName, $uploader, $user);
-		'Helper'::sendPushNotification($uploader, 'vlike', $user, $challengeName);
+		'Helper'::sendPushNotification($uploader, 'vlike', $user, $challengeName, '');
             }
                 break;
            case 'comment':
@@ -31,6 +31,11 @@ require 'helper.php';
                'Helper'::unLikeComment($uuid, $user);
            }else{
                'Helper'::likeComment($uuid, $user);
+                $db = new PDO('Helper'::COMMENTS_DATABASE_LOCATION);
+                $results = $db->query("SELECT challenge,author FROM comments WHERE uuid=\"" . $uuid . "\";")->fetchAll()[0];
+                $author = $results["author"];
+                $challenge = $results["challenge"];
+                'Helper'::sendPushNotification($author, "clike", $user, $challenge, $uuid);
            }
            break;
     }
