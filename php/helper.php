@@ -501,6 +501,9 @@ static function registerChallenge($name, $author, $instructions){
         //finally delete the likes of videos that were entered into the database
         $query .= "DELETE FROM videoLikeRecords WHERE challenge=\"" . $challengeName . "\";";
        
+        //take care of any notifications
+        $ndb = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
+        $ndb->exec("DELETE FROM notifications WHERE challenge = \"" . $challengeName . "\";");
         //execute the boatload of queries
         $db->exec($query);
         
@@ -527,7 +530,13 @@ static function registerChallenge($name, $author, $instructions){
         //lastly we take care of all the entries in acceptanceRecords where this video appears
         $query .= "DELETE FROM acceptanceRecords WHERE challenge=\"" . $challengeName . "\" AND user=\"" . $uploader . "\";";
         
-        //execute that shit
+        //take care of any notifications
+        $ndb = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
+        $nquery = "DELETE FROM notifications WHERE type=\"acceptance\" AND challenge=\"" . $challengeName . "\" AND sender = \"" . $uploader . "\";";
+        $nquery .= "DELETE FROM notifications WHERE type=\"vlike\" AND challenge=\"" . $challengeName . "\" AND sender = \"" . $uploader . "\";";
+        
+        //execute
+        $ndb->exec($nquery);
         $db->exec($query);
 	
 	exec("rm -r /var/www/php/uploads/" . 'Helper'::getSafeString($challengeName) . "/" . $uploader);
@@ -545,15 +554,26 @@ static function removeUser($username){
 		foreach($challengeNames as $challenge){
 			'Helper'::removeChallenge($challenge['name']);
 		}
+	}
 
-		//next, obliterate all traces of this user ever existing;
-		}	
+        $videoResults = $db->query("SELECT challenge FROM acceptanceRecords WHERE user = \"" . $username . "\";");
+        if($videoResults != null){
+       		$videoResults->setFetchMode(PDO::FETCH_ASSOC);
+		$accepted = $videoResults->fetchAll();
+		foreach($accepted as $acc){
+			'Helper'::removeVideo($acc['challenge'], $username);
+ 		}	
+        }
 	
 	
 	$query = "DELETE FROM userMetadata WHERE username=\"" . $username . "\";";
 	$query .= "DELETE FROM followRecords WHERE user=\"" . $username . "\" OR isFollowing=\"" . $username . "\";";
+
+        //take care of any notifications
+        $ndb = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
+        $ndb->exec("DELETE FROM notifications WHERE user = \"" . $username . "\" OR sender = \"" . $username . "\"");
 	$db->exec($query);
-	exec("/var/www/images/" . $username);
+	exec("rm -r var/www/images/" . $username);
 }
     /***
      returns true if user is following user2
@@ -630,7 +650,7 @@ static function removeUser($username){
 		$result = $db->query("SELECT * FROM notifications WHERE username=\"" . $user . "\" AND type=\"" . $type . "\" AND sender=\"" . $sender . "\" AND challenge=\"" . $challenge . "\" AND uuid=\"" . $uuid . "\";");
 		
 		if($result->fetchAll()[0] == null){
-                    $db->exec("INSERT INTO notifications VALUES (\"" . $user . "\",\"" . $type . "\",\"" . $sender . "\",\"" . $challenge . "\");");
+                    $db->exec("INSERT INTO notifications VALUES (\"" . $user . "\",\"" . $type . "\",\"" . $sender . "\",\"" . $challenge . "\",\"" . $uuid . "\");");
 		    
 $body = '';
 switch($type){
