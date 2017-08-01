@@ -7,14 +7,15 @@ require 'helper.php';
 $username = $_POST['username'];
 $password = $_POST['password'];
 //uses helper method to retrieve a user from the database
-$results = 'Helper'::getUserByName($username);
+$results = 'Helper'::getUserByName($username)[0];
+$hep = hash('sha512', $password . $results['salt']);
 //sets up return array
 $return = array();
 
 //logic for determining response to client
-if ($results[0]['username'] === null){
+if ($results['username'] === null){
 	$return['success'] = 'null';
-}else if ($results[0]['password'] === $password){
+}else if ($results['password'] === $hep){
 	$return['success'] = 'true';
 }else{
 	$return['success'] = 'false';
