@@ -406,7 +406,9 @@ static function registerChallenge($name, $author, $instructions){
         //establish connection to database
         $db = new PDO('Helper'::DATABASELOCATION);
         //setup query
-        $query = "INSERT INTO userMetadata VALUES (\"" . $username . "\",\"" . $password . "\",\"" . $bio . "\",\"" . $email . "\");";
+        $salt = bin2hex(random_bytes(64));
+        $hp = hash('sha512', $password . $salt);
+        $query = "INSERT INTO userMetadata VALUES (\"" . $username . "\",\"" . $hp . "\",\"" . $bio . "\",\"" . $email . "\",\"" . $salt . "\");";
         //execute query
         $db->exec($query);
     }
