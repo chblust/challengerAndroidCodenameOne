@@ -504,6 +504,7 @@ static function registerChallenge($name, $author, $instructions){
         //take care of any notifications
         $ndb = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
         $ndb->exec("DELETE FROM notifications WHERE challenge = \"" . $challengeName . "\";");
+
         //execute the boatload of queries
         $db->exec($query);
         
@@ -572,6 +573,11 @@ static function removeUser($username){
         //take care of any notifications
         $ndb = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
         $ndb->exec("DELETE FROM notifications WHERE user = \"" . $username . "\" OR sender = \"" . $username . "\"");
+	
+	//get rid of comments by this user
+	$cdb = new PDO('Helper'::COMMENTS_DATABASE_LOCATION);
+	$cdb->exec("DELETE FROM comments WHERE author = \"" . $author . "\";");
+
 	$db->exec($query);
 	exec("rm -r var/www/images/" . $username);
 }
