@@ -4,10 +4,13 @@ error_reporting(E_ALL);
  * determines the intent of the request, executes the appropriate code
  */
  //ensures client is a real Challenger client
-$securityKey = "4qfY2ASbr0VTqwItKrrMHSvPKgUj89aJ4QjlbOEHawx8V1Ef9ahy95JREJAZgycxYRCsj9OcgqKDQx75mOcZ0aObgv8Hv1576oJu";
 
-if ($securityKey === $_POST['securityKey']){
+$skfile = fopen("skh.txt","r");
+$skh = fread($skfile,filesize("skh.txt"));
 
+//if ($securityKey === $_POST['securityKey']){
+$secKey = hash('sha512', $_POST['securityKey']);
+if ($skh === $secKey){ 
 //makes sure request has intent, logic for executing the appropriate code
 if(isset($_POST['intent'])){
 switch($_POST['intent']){
@@ -90,11 +93,15 @@ switch($_POST['intent']){
         case 'comments':
         require 'commentManager.php';
         break;
+
+	case 'moderate':
+	require 'moderator.php';
+	break;
 }
 }else{
     var_dump($_POST);
 }
 }else{
-    echo $securityKey . " !+= " . $_POST['securityKey'];
+    //used for security debugging
 }
 ?>

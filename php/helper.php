@@ -648,6 +648,43 @@ static function removeUser($username){
             }
             return true;
     }
+static function shouldSend($user, $type){
+	$db = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
+	$results = $db->query("SELECT * FROM settings WHERE username = \"" . $user . "\";");
+	$results->setFetchMode(PDO::FETCH_ASSOC);
+	$settings = $results->fetchAll()[0];
+	switch($type){
+	case 'acceptance':
+		if($settings['accept'] === 'true'){
+			return true;
+		}
+		break;
+	case 'follow':
+		if($settings['follow'] === 'true'){
+			return true;
+		}
+		break;
+	case 'like':
+	case 'vlike':
+		if($settings['like'] === 'true'){
+			return true;
+		}
+		break;
+	case 'rechallenge':
+		if($settings['rechallenge'] === 'true'){
+			return true;
+		}
+		break;
+	case 'comment':
+	case 'reply':
+	case 'clike':
+		if($settings['comment'] === 'true'){
+			return true;
+		}
+		break;
+	}
+	return false;
+}
 	static function sendPushNotification($user, $type, $sender, $challenge, $uuid){
 		if($user !== $sender){
 		require '/var/www/pushManagement/vendor/autoload.php';
@@ -655,7 +692,7 @@ static function removeUser($username){
         	$db = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
 		$result = $db->query("SELECT * FROM notifications WHERE username=\"" . $user . "\" AND type=\"" . $type . "\" AND sender=\"" . $sender . "\" AND challenge=\"" . $challenge . "\" AND uuid=\"" . $uuid . "\";");
 		
-		if($result->fetchAll()[0] == null){
+		if($result->fetchAll()[0] == null && 'Helper'::shouldSend($user, $type)){
                     $db->exec("INSERT INTO notifications VALUES (\"" . $user . "\",\"" . $type . "\",\"" . $sender . "\",\"" . $challenge . "\",\"" . $uuid . "\");");
 		    
 $body = '';
@@ -724,6 +761,7 @@ break;
     		    ),
 		      )
 		    );
+		
               }   
           }
 	} 

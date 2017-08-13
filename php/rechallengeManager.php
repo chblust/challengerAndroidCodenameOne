@@ -11,7 +11,7 @@ require 'helper.php';
     }else{
         'Helper'::rechallengeChallenge($challengeName, $rechallengeUser);
         $author = 'Helper'::getChallengeByName($challengeName, 'challenge')[0]['author'];
-        'Helper'::sendPushNotification($author, 'rechallenge', $rechallengeUser, $challengeName);
+        'Helper'::sendPushNotification($author, 'rechallenge', $rechallengeUser, $challengeName, "");
     }
     
             
