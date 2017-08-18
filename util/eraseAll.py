@@ -22,5 +22,5 @@ if confirm == "y":
 		print("deleting directory: " + file)
 		os.system("sudo rm -r /var/www/php/uploads/" + file);
 
-	print("u either did that on purpose or royally f__ed up")
+	print("u either did that on purpose or royally messed up")
 
