@@ -12,6 +12,7 @@ $index = 0;
 foreach ($usernames as $username){
 		$userData[$index] = 'Helper'::getUserByName($username)[0];
         unset($userData[$index]['password']);
+	unset($userData[$index]['salt']);
 		$index++;
 }
 //send client json containing user metadata

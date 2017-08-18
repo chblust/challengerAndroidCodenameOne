@@ -105,9 +105,9 @@ require 'helper.php';
 		$challengeNames = $results->fetchAll();
 		$index = count($challengeNames)-1;
 		foreach($challengeNames as $challenge){
-                $challengeData[$index] = 'Helper'::getChallengeByName($challenge['challenge'], 'challenge')[0];
-                $challengeData[$index]['feedType'] = 'challenge';
-                $challengeData[$index]['poster'] = 'null';
+                $challengeData[$index] = 'Helper'::getChallengeByName($challenge['challenge'], 'acceptance')[0];
+                $challengeData[$index]['feedType'] = 'acceptance';
+                $challengeData[$index]['poster'] = $username;
                 $index--;
             	}
 		break;

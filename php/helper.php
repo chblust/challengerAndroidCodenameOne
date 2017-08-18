@@ -45,6 +45,14 @@ static function getUserByName($name){
         $data[0]['following'][$index] = $nextFollowing['isFollowing'];
         $index++;
     }
+
+	$acceptedResults = $db->query("SELECT challenge FROM acceptanceRecords WHERE user = \"" . $name . "\";");
+	if ($acceptedResults == false){
+		$data[0]['acceptedCount'] = 0;
+	}else{
+		$acceptedResults->setFetchMode(PDO::FETCH_ASSOC);
+		$data[0]['acceptedCount'] = sizeof($acceptedResults->fetchAll());
+	}
     
 	return $data;
 }

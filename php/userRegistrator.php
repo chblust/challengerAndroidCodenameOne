@@ -15,6 +15,8 @@
     
     if ($retrievedUser[0]['username'] === null){
         'Helper'::registerUser($username, $password, $bio, $email);
+	$ndb = new PDO('Helper'::NOTIFICATIONS_DATABASE_LOCATION);
+	$ndb->exec("INSERT INTO settings VALUES (\"" . $username . "\",\"true\",\"true\",\"true\",\"true\",\"true\");");
         $response['success'] = 'true';
         
     }else{
